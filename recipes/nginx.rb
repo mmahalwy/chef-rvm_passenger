@@ -24,6 +24,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# https://gist.github.com/philwo/3051666
+
 include_recipe "nginx::source"
 include_recipe "rvm_passenger"
 
@@ -55,10 +58,10 @@ rvm_shell "build passenger_nginx_module" do
   INSTALL
   notifies      :restart, resources(:service => "nginx")
 
-  not_if        <<-CHECK
-    #{nginx_install}/sbin/nginx -V 2>&1 | \
-      grep "`cat /tmp/passenger_root_path`/ext/nginx"
-  CHECK
+  not_if do [:rvm_passenger][:version]
+    File.exists?("/opt/nginx-#{nginx_version}/sbin/nginx") &&
+    File.exists?("/usr/local/rvm/gems/#{node['rvm']['default_ruby']}/gems/passenger-#{node['rvm_passenger']['version']}/buildout/agents/PassengerWatchdog")
+  end
 end
 
 template "#{nginx_dir}/conf.d/passenger.conf" do
