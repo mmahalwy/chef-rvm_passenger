@@ -58,7 +58,7 @@ rvm_shell "build passenger_nginx_module" do
   INSTALL
   notifies      :restart, resources(:service => "nginx")
 
-  not_if do [:rvm_passenger][:version]
+  not_if do
     File.exists?("/opt/nginx-#{nginx_version}/sbin/nginx") &&
     File.exists?("/usr/local/rvm/gems/#{node['rvm']['default_ruby']}/gems/passenger-#{node['rvm_passenger']['version']}/buildout/agents/PassengerWatchdog")
   end
