@@ -35,7 +35,7 @@ class Chef
           require 'rubygems/dependency_installer'
 
           spec = Gem::DependencyInstaller.new.find_gems_with_sources(
-            Gem::Dependency.new("passenger", '>= 0')).last
+            Gem::Dependency.new("passenger", '>= 0')).set.last
 
           if spec.nil?
             raise Chef::RVMPassenger::GemVersionNotFound,
@@ -55,7 +55,6 @@ class Chef
       def determine_rvm_ruby_if_not_given
         if node['rvm_passenger']['rvm_ruby'].nil?
           rvm_ruby = node['rvm']['default_ruby']
-          rvm_ruby += "@passenger" unless rvm_ruby == "system"
 
           node.set['rvm_passenger']['rvm_ruby'] = rvm_ruby
           Chef::Log.debug(%{Setting node['rvm_passenger']['rvm_ruby'] = } +
