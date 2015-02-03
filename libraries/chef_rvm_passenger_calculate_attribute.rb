@@ -43,9 +43,15 @@ class Chef
       end
 
       def for_ruby_wrapper
-        gem_home = rvm_env.info.first[1]['homes']['gem']
-        wrapper_home = gem_home.sub(/\/gems\//, '/wrappers/')
-        result = "#{wrapper_home}/ruby"
+        # Works
+        # /usr/local/rvm/gems/ruby-2.2.0/wrappers/ruby;
+        
+        # gem_home = rvm_env.info.first[1]['homes']['gem']
+        # wrapper_home = gem_home.sub(/\/gems\//, '/wrappers/')
+        # result = "#{wrapper_home}/ruby"
+        ruby = rvm_ruby.split('@').first
+        result = "/usr/local/rvm/gems/#{ruby}/wrappers/ruby"
+        puts result
 
         node.set['rvm_passenger']['ruby_wrapper'] = result
         Chef::Log.debug(%{Setting node['rvm_passenger']['ruby_wrapper'] = } +

@@ -26,6 +26,11 @@
 
 
 # https://gist.github.com/philwo/3051666
+# TODO: Need to determine the version of passenger! 
+if  File.exists?("/opt/nginx-#{node['nginx']['version']}/sbin/nginx") &&
+    File.exists?("/usr/local/rvm/gems/#{node['rvm_passenger']['rvm_ruby']}/gems/passenger-4.0.58/buildout/agents/PassengerWatchdog")
+    return
+end
 
 include_recipe "nginx::source"
 include_recipe "rvm_passenger"
@@ -58,10 +63,10 @@ rvm_shell "build passenger_nginx_module" do
   INSTALL
   notifies      :restart, resources(:service => "nginx")
 
-  not_if do
-    File.exists?("/opt/nginx-#{nginx_version}/sbin/nginx") &&
-    File.exists?("/usr/local/rvm/gems/#{node['rvm']['default_ruby']}/gems/passenger-#{node['rvm_passenger']['version']}/buildout/agents/PassengerWatchdog")
-  end
+  not_if        <<-CHECK
+    #{nginx_install}/sbin/nginx -V 2>&1 | \
+      grep "`cat /tmp/passenger_root_path`/ext/nginx"
+  CHECK
 end
 
 template "#{nginx_dir}/conf.d/passenger.conf" do
@@ -69,6 +74,14 @@ template "#{nginx_dir}/conf.d/passenger.conf" do
   owner     "root"
   group     "root"
   mode      "0644"
+  notifies  :restart, resources(:service => "nginx")
+end
+
+template "#{node['nginx']['dir']}/sites-available/default" do
+  source 'default-site.erb'
+  owner  'root'
+  group  node['root_group']
+  mode   '0644'
   notifies  :restart, resources(:service => "nginx")
 end
 
