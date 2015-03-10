@@ -28,20 +28,8 @@
 # https://gist.github.com/philwo/3051666
 # http://stackoverflow.com/questions/16309808/how-can-i-put-the-output-of-a-chef-execute-resource-into-a-variable
 # TODO: Need to determine the version of passenger!
-
-ruby_block "check_curl_command_output" do
-    block do
-      #tricky way to load this Chef::Mixin::ShellOut utilities
-      Chef::Resource::RubyBlock.send(:include, Chef::Mixin::ShellOut)
-      curl_command = 'gem list | grep passenger'
-      curl_command_out = shell_out(curl_command)
-      version = curl_command_out.split('(')[1].split(')')[0]
-    end
-    action :create
-end
-
 if  File.exists?("/opt/nginx-#{node['nginx']['version']}/sbin/nginx") &&
-    File.exists?("/usr/local/rvm/gems/#{node['rvm_passenger']['rvm_ruby']}/gems/passenger-#{version}/buildout/agents/PassengerWatchdog")
+    File.exists?("/usr/local/rvm/gems/#{node['rvm_passenger']['rvm_ruby']}/gems/passenger-#{node['rvm_passenger']['version']}/buildout/agents/PassengerWatchdog")
     return
 end
 
