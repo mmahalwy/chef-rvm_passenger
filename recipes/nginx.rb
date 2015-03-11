@@ -29,7 +29,7 @@
 # http://stackoverflow.com/questions/16309808/how-can-i-put-the-output-of-a-chef-execute-resource-into-a-variable
 # TODO: Need to determine the version of passenger!
 if  File.exists?("/opt/nginx-#{node['nginx']['version']}/sbin/nginx") &&
-    File.exists?("/usr/local/rvm/gems/#{node['rvm_passenger']['rvm_ruby']}/gems/passenger-#{node['rvm_passenger']['version']}/buildout/agents/PassengerWatchdog")
+    File.exists?("/usr/local/rvm/gems/#{node['rvm_passenger']['rvm_ruby']}/gems/passenger-#{node['rvm_passenger']['version']}/ext/common/agents/Watchdog/Main.cpp")
     return
 end
 
